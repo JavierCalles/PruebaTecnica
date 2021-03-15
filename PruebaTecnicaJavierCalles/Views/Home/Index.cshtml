@@ -1,0 +1,120 @@
+﻿@model List<ComunicationModels.ReporteCovid>
+<script type="text/javascript" src="~/Scripts/ReportCovid/Covid.js"></script>
+
+
+
+
+@{
+    ViewBag.Title = "Covid Reports";
+
+    var cont = 10;
+    var grid = new WebGrid(Model, rowsPerPage: cont == 0 ? 1 : cont, ajaxUpdateContainerId: "result",
+    columnNames: new[] { "name", "confirmed", "deaths" });
+
+}
+
+<br />
+<br />
+
+@{
+
+
+
+    var gridColumns = new List<WebGridColumn>();
+
+    gridColumns.Add(grid.Column("name", ViewBag.TIPO, canSort: false));
+    gridColumns.Add(grid.Column("confirmed", "CASES", canSort: false));
+    gridColumns.Add(grid.Column("deaths", "DEATHS", canSort: false));
+
+
+    if (Model.Count > 0)
+    {
+
+
+        <div class="row">
+            @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { @id = "Refres" }))
+            {
+
+
+
+                <div class="col-lg-3">
+                    <div class="dropdown-toggle">
+                        <input id="OldRegion" name="OldRegion" type="hidden" value="@ViewBag.Regions">
+
+                        @{
+
+                            var iso = new List<SelectListItem>
+                                () { new SelectListItem { Value = "Regions", Text = "Regions", Selected = true } };
+
+                            foreach (var item in Model)
+                            {
+                                if (ViewBag.Regions == item.region.iso)
+                                {
+                                    iso.Add(new SelectListItem
+                                    {
+                                        Value = item.region.iso,
+                                        Text = item.region.name,
+                                        Selected = true
+                                    });
+                                }
+                                else
+                                {
+                                    iso.Add(new SelectListItem
+                                    {
+                                        Value = item.region.iso,
+                                        Text = item.region.name,
+                                        Selected = false
+                                    });
+                                }
+
+                            }
+                        }
+
+                        @Html.DropDownListFor(x => x[0].region.iso, iso, new { @class = "form-control", @id = "ListRegion", @Name = "Region" })
+
+                    </div>
+                </div>
+                <div class="col-lg-5">
+
+                    <div class="form-group btn-group-toggle" data-toggle="buttons">
+                        <input type="button" style="width: 150px;" id="btnReport" value="Report" onclick="LookProvi()" class="btn btn-info" />
+                    </div>
+
+                </div>
+                <div class="col-lg-4">
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                        <label class="btn btn-default" id="lbXML" onclick="validDocument('XML')">
+                            <input type="checkbox" style="width: 150px;" id="chXML" name="chckDocuments" value="XML" autocomplete="off"> XML
+                        </label>
+                        <label class="btn btn-default" id="lbJson" onclick="validDocument('JSON')">
+                            <input type="checkbox" style="width:150px;" id="chJson" name="chckDocuments" value="JSON" autocomplete="off"> JSON
+                        </label>
+                        <label class="btn btn-default" id="lbCSV" onclick="validDocument('CSV')">
+                            <input type="checkbox" style="width:150px;" id="chCSV" name="chckDocuments" value="CSV" autocomplete="off"> CSV
+                        </label>
+                    </div>
+                </div>
+            }
+        </div>
+
+
+
+        @grid.GetHtml(
+              htmlAttributes: new { id = "result" },
+              tableStyle: "webgrid-table table table-bordered",
+              headerStyle: "texto-Crecer",
+              footerStyle: "webgrid-footer",
+              alternatingRowStyle: "webgrid-alternating-row",
+              selectedRowStyle: "table",
+              rowStyle: "",
+              fillEmptyRows: true,
+              firstText: "<< Primera",
+              previousText: "< Anterior",
+              nextText: "Siguiente >",
+              lastText: "Última >>",
+              mode: WebGridPagerModes.All,
+              columns: grid.Columns(gridColumns.ToArray()))
+    }
+
+
+}

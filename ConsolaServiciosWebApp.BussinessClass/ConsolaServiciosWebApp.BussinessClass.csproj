@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ComunicationModels\ComunicationModels.csproj" />
+    <ProjectReference Include="..\ConsoladeServicio.Services\ConsoladeServicio.Services.csproj" />
+  </ItemGroup>
+
+</Project>
